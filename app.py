@@ -21,7 +21,6 @@ def index():
     
 @app.route('/graph', methods=['POST'])
 def graph():
-#    if request.method == 'POST':
     app.vars['ticker'] = request.form['ticker']
     
     api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % app.vars['ticker']
