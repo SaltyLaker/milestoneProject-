@@ -26,17 +26,17 @@ def graph():
     openingPrice = request.form.get('Open') 
     adjOpeningPrice = request.form.get('Adj. Open')
 
-    api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % stockName
+    URL = 'https://www.quandl.com/api/v1/datasets/WIKI/' + stockName + '.json?api_key=gVz7XbzeecyxHdkCn8yB'
     session = requests.Session()
     session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-    raw_data = session.get(api_url)
+    raw_data = session.get(URL)
 
     a = raw_data.json()
     df = pandas.DataFrame(a['data'], columns=a['column_names'])
 
     df['Date'] = pandas.to_datetime(df['Date'])
 
-    p = figure(title='Stock prices for %s' % stockName,
+    p = figure(title='Stock prices for ' + stockName,
         x_axis_label='date',
         x_axis_type='datetime')
     
