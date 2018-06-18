@@ -29,7 +29,7 @@ def graph():
     URL = 'https://www.quandl.com/api/v1/datasets/WIKI/' + stockName + '.json?api_key=gVz7XbzeecyxHdkCn8yB'
     session = requests.Session()
     session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-    raw_data = session.get(URL)
+    raw_data = session.get(api_url)
 
     a = raw_data.json()
     df = pandas.DataFrame(a['data'], columns=a['column_names'])
