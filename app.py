@@ -21,33 +21,36 @@ def index():
     
 @app.route('/graph', methods=['POST'])
 def graph():
-#    if request.method == 'POST':
-        app.vars['ticker'] = request.form['ticker']
-        
-        api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % app.vars['ticker']
-        session = requests.Session()
-        session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-        raw_data = session.get(api_url)
+    
+    stockName = request.form.get('ticker')
+    closingPrice = request.form.get('Close')
+    adjClosingPrice = request.form.get('Adj. Close')
+    openingPrice = request.form.get('Open') 
+    adjOpeningPrice = request.form.get('Adj. Open')
 
-        a = raw_data.json()
-        df = pandas.DataFrame(a['data'], columns=a['column_names'])
+    URL = 'https://www.quandl.com/api/v1/datasets/WIKI/' + stockName + '.json?api_key=gVz7XbzeecyxHdkCn8yB'
 
-        df['Date'] = pandas.to_datetime(df['Date'])
+    session = requests.Session()
+    session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
+    rawData = session.get(api_url)
 
-        p = figure(title='Stock prices for %s' % app.vars['ticker'],
-            x_axis_label='date',
-            x_axis_type='datetime')
-        
-        if request.form.get('Close'):
-            p.line(x=df['Date'].values, y=df['Close'].values,line_width=2, legend='Close')
-        if request.form.get('Adj. Close'):
-            p.line(x=df['Date'].values, y=df['Adj. Close'].values,line_width=2, line_color="green", legend='Adj. Close')
-        if request.form.get('Open'):
-            p.line(x=df['Date'].values, y=df['Open'].values,line_width=2, line_color="red", legend='Open')
-        if request.form.get('Adj. Open'):
-            p.line(x=df['Date'].values, y=df['Adj. Open'].values,line_width=2, line_color="purple", legend='Adj. Open')
-        script, div = components(p)
-        return render_template('graph.html', script=script, div=div)
+    rawDataJson = rawData.json()
+    df = pandas.DataFrame(rawDataJson['data'], columns=rawDataJson['column_names'])
+
+    df['Date'] = pandas.to_datetime(df['Date'])
+
+    p = figure(title='Stock prices for ' + stockName, x_axis_label='date', x_axis_type='datetime')
+
+    if closingPrice:
+        p.line(x=df['Date'].values, y=df['Close'].values,line_width=2, line_color = "black", legend='Close')
+    if adjClosingPrice:
+        p.line(x=df['Date'].values, y=df['Adj. Close'].values,line_width=2, line_color="green", legend='Adj. Close')
+    if openingPrice:
+        p.line(x=df['Date'].values, y=df['Open'].values,line_width=2, line_color="red", legend='Open')
+    if adjOpeningPrice:
+        p.line(x=df['Date'].values, y=df['Adj. Open'].values,line_width=2, line_color="purple", legend='Adj. Open')
+    script, div = components(p)
+    return render_template('graph.html', script=script, div=div)
 
 if __name__ == '__main__':
     app.run(port=33507)
