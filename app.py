@@ -21,27 +21,26 @@ def index():
 def graph():
     
     stockName = request.form.get('ticker')
-    closingPrice = request.form.get('Close')
-    adjClosingPrice = request.form.get('Adj. Close')
-    openingPrice = request.form.get('Open') 
-    adjOpeningPrice = request.form.get('Adj. Open')
+    closingPrice = request.form.get('closingPrice')
+    adjClosingPrice = request.form.get('adjClosingPrice')
+    openingPrice = request.form.get('openingPrice') 
+    adjOpeningPrice = request.form.get('adjOpeningPrice')
 
     URL = 'https://www.quandl.com/api/v1/datasets/WIKI/' + stockName + '.json?api_key=gVz7XbzeecyxHdkCn8yB'
+
     session = requests.Session()
     session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-    raw_data = session.get(api_url)
+    rawData = session.get(URL)
 
-    a = raw_data.json()
-    df = pandas.DataFrame(a['data'], columns=a['column_names'])
+    rawDataJson = rawData.json()
+    df = pandas.DataFrame(rawDataJson['data'], columns=rawDataJson['column_names'])
 
     df['Date'] = pandas.to_datetime(df['Date'])
 
-    p = figure(title='Stock prices for ' + stockName,
-        x_axis_label='date',
-        x_axis_type='datetime')
-    
+    p = figure(title='Stock prices for ' + stockName, x_axis_label='date', x_axis_type='datetime')
+
     if closingPrice:
-        p.line(x=df['Date'].values, y=df['Close'].values,line_width=2, legend='Close')
+        p.line(x=df['Date'].values, y=df['Close'].values,line_width=2, line_color = "black", legend='Close')
     if adjClosingPrice:
         p.line(x=df['Date'].values, y=df['Adj. Close'].values,line_width=2, line_color="green", legend='Adj. Close')
     if openingPrice:
