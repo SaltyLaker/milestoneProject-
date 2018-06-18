@@ -43,13 +43,13 @@ def graph():
         x_axis_label='date',
         x_axis_type='datetime')
     
-    if request.form.get('Close'):
+    if closingPrice:
         p.line(x=df['Date'].values, y=df['Close'].values,line_width=2, legend='Close')
-    if request.form.get('Adj. Close'):
+    if adjClosingPrice:
         p.line(x=df['Date'].values, y=df['Adj. Close'].values,line_width=2, line_color="green", legend='Adj. Close')
-    if request.form.get('Open'):
+    if openingPrice:
         p.line(x=df['Date'].values, y=df['Open'].values,line_width=2, line_color="red", legend='Open')
-    if request.form.get('Adj. Open'):
+    if adjOpeningPrice:
         p.line(x=df['Date'].values, y=df['Adj. Open'].values,line_width=2, line_color="purple", legend='Adj. Open')
     script, div = components(p)
     return render_template('graph.html', script=script, div=div)
