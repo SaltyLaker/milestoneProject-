@@ -8,8 +8,6 @@ from flask import Flask,render_template,request,redirect,session
 
 app = Flask(__name__)
 
-app.vars={}
-
 
 @app.route('/')
 def main():
@@ -21,15 +19,14 @@ def index():
     
 @app.route('/graph', methods=['POST'])
 def graph():
-    app.vars['ticker'] = request.form['ticker']
     
     stockName = request.form.get('ticker')
     closingPrice = request.form.get('Close')
     adjClosingPrice = request.form.get('Adj. Close')
     openingPrice = request.form.get('Open') 
     adjOpeningPrice = request.form.get('Adj. Open')
-    
-    api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % app.vars['ticker']
+
+    api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % stockName
     session = requests.Session()
     session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
     raw_data = session.get(api_url)
@@ -39,7 +36,7 @@ def graph():
 
     df['Date'] = pandas.to_datetime(df['Date'])
 
-    p = figure(title='Stock prices for %s' % app.vars['ticker'],
+    p = figure(title='Stock prices for %s' % stockName,
         x_axis_label='date',
         x_axis_type='datetime')
     
