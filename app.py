@@ -23,6 +23,12 @@ def index():
 def graph():
     app.vars['ticker'] = request.form['ticker']
     
+    stockName = request.form.get('ticker')
+    closingPrice = request.form.get('Close')
+    adjClosingPrice = request.form.get('Adj. Close')
+    openingPrice = request.form.get('Open') 
+    adjOpeningPrice = request.form.get('Adj. Open')
+    
     api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % app.vars['ticker']
     session = requests.Session()
     session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
